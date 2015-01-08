@@ -1,0 +1,23 @@
+package ucd.rubicon.network.tinyos;
+
+/**
+ * Describes the possible ctrl-level commands that can be transmitted between a Rubicon component and a Rubicon sensing & acting device
+ *  
+ * @author Mauro Dragone - UCD (<a href="mailto:mauro.dragone@ucd.ie">Contact</a>)
+ *
+ */
+public enum RubiconMessageCtrlTypesEnum { 
+	
+	// For the moment it supports only three commands for the Control Layer
+	// The Control Layer may reserve the first N, then another slot for the Learning Layer, and then other applications
+	CMD_READ_PERIODICALLY(1),  // From component->device, to ask the device to update sensor and actuator values periodically
+	CMD_ACTUATE(2),   // From component->device, to ask the device to set a value in a given actuator
+	CMD_UPDATE(34);    // From device->component, to send updates of sensor and actuator values
+	
+	private final int cmdType;
+		
+	RubiconMessageCtrlTypesEnum(int cmdType) { this.cmdType = cmdType; }
+		
+	public int getCmdType() { return cmdType; }
+}; 
+		

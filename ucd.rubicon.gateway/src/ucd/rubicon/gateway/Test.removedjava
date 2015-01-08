@@ -1,0 +1,67 @@
+package ucd.rubicon.gateway;
+
+import java.util.List;
+import java.util.Properties;
+
+import ucd.rubicon.network.DummyNetwork;
+import ucd.rubicon.network.RubiconAddress;
+import ucd.rubicon.network.RubiconMessage;
+import ucd.rubicon.network.RubiconMessageListener;
+import ucd.rubicon.network.RubiconNetwork;
+import core.PeisJavaMT;
+import core.WrongPeisKernelVersionException;
+
+/**
+ * Test the {@Link RubiconGateway} by installing a dummy network {@Link DummyNetwork}
+ * which send a periodic message to a remote island
+ * 
+ * Test by running two shells:
+ * 
+ * shell1>~/workspace/ucd.rubicon.gateway/bin$ java ucd.rubicon.gateway.Test 6 --peis-id 5
+ * shell2>~/workspace/ucd.rubicon.gateway/bin$ java ucd.rubicon.gateway.Test 5 --peis-id 6
+ *
+ * The first shell starts the gateway with peis-id 5 and sends data to the island with peis-id 6
+ * The second shell starts the gateway with peis-id 6 and sends data to the island with peis-id 5
+ * 
+ * When both gateways are running, they receive each other data
+ * 
+ * @author Mauro Dragone - UCD (<a href="mailto:mauro.dragone@ucd.ie">Contact</a>)
+ *
+ * @see RubiconGateway
+ */
+public class Test {
+	
+	public static void main(String[] args) {		
+		// the first argument should be the peis-id of the bridge on the remote island
+		final int remotePeisId = Integer.parseInt(args[0]); 
+				
+		try {
+			System.out.println("RUBICON Gateway: Initializing PeisJavaMT...");
+			PeisJavaMT.peisjava_initialize(args);
+			
+			System.out.println("PeisID is "+ PeisJavaMT.peisjava_peisid());
+			
+			RubiconGateway gateway = new RubiconGateway();
+			
+			// install a Dummy Network (normally the class of the network
+			// is specified in the gateway.properties file, in the network.class field
+			// but here we are installing a dummy network just for testing
+			DummyNetwork dummyNetwork = new DummyNetwork();
+			Properties properties = new Properties();
+			// sets the peis id of the remote island where to send dummy messages
+			// this is only for test purpose
+			properties.put(DummyNetwork.TEST_REMOTE_ISLAND_ID, remotePeisId);
+			dummyNetwork._init(gateway.getIslandID(), gateway);
+						
+			// install the network with the gateway
+			gateway.installNetwork(dummyNetwork);
+					
+		} 			
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
+		}		
+	}
+}

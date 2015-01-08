@@ -1,0 +1,52 @@
+Compile the TinyOS application with:
+"make telosb"
+
+If it mentions something about the following:
+"
+> symbol  : class SerialPacket
+> location: class net.tinyos.message.Message
+>   private SerialPacket serialPacket;
+>           ^
+> /opt/tinyos-2.1.1/support/sdk/java/net/tinyos/message/Message.java:676: cannot find symbol
+"
+
+Then you don't have your classpath properly set. Try the following:
+
+"export CLASSPATH=.:/opt/tinyos-2.1.1/support/sdk/java/tinyos.jar"
+
+Then restart the bash session for good luck.
+
+then flash it on the motes with:
+"make telosb reinstall.NODE_ID bsl,YOUR_SERIAL_PORT"
+
+
+where NODE_ID is the identifier of the mote (IMPORTANT: 0 for the sink)
+to see your serial port type:
+"motelist"
+
+Compile the java application (SerialReader.java) to send command to the sink and to get the read values with:
+"javac SerialReader.java"
+
+and then connect the sink to the USB port of your base station and run the java application with:
+"java SerialReader -comm serial@YOUR_SERIAL_PORT:telosb"
+
+
+You maybe faced with the following problem:
+
+"
+The toscomm JNI library was not found.
+Check that your tinyos-tools package is installed and try
+rerunning tos-install-jni.
+Aborting.
+"
+
+Just run:
+
+"
+sudo tos-install-jni
+"
+
+The red led blinking means a readio transmission has been executed.
+On the other motes: 
+- the blu led ON means that the on-demand read modality with random delay is active
+- the green led ON means that the on-demand read modality with fixed delay is active

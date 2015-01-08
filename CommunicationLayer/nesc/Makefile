@@ -1,0 +1,2 @@
+COMPONENT=SynChannelsC
+include $(MAKERULES)

@@ -1,0 +1,2 @@
+COMPONENT=RssiAnchorAppC
+include $(MAKERULES)

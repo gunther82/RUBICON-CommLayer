@@ -1,0 +1,51 @@
+/**
+ * 
+ */
+package ucd.rubicon.network.tinyos;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import rubicon.communication.NetMsg;
+
+import ucd.rubicon.network.RubiconAddress;
+import ucd.rubicon.network.RubiconMessage;
+import ucd.rubicon.network.RubiconMessageConverter;
+import ucd.rubicon.network.RubiconMessageCtrlActuateCmd;
+
+
+/**
+ * Control command message used to send the CMD_READ_PERIODICALLY instruction to a device
+ * 
+ * @author Mauro Dragone - UCD (<a href="mailto:mauro.dragone@ucd.ie">Contact</a>)
+ * @version %I%, %G%
+ * 
+ */
+public class RubiconMessageCtrlActuateCmdConverter extends RubiconMessageConverterTinyOS<RubiconMessageCtrlActuateCmd> {
+
+	@Override
+	protected byte[] computePayload(RubiconMessageCtrlActuateCmd rubiconMessage) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(bos);
+		try {
+			dos.writeByte(3);
+			dos.writeByte(5);
+			dos.writeByte((byte)RubiconMessageCtrlTypesEnum.CMD_ACTUATE.getCmdType());
+			dos.writeShort(rubiconMessage.getActuator());
+			dos.writeInt(rubiconMessage.getValue());
+			dos.flush();
+			return bos.toByteArray();
+		} catch (IOException e) {
+			// TODO LOG
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+
+		
+	
+}

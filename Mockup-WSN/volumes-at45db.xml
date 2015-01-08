@@ -1,0 +1,7 @@
+<!-- a block is of 256 bytes -->
+
+<volume_table>
+  <!--volume name="LOGTEST" size="262144"/-->
+  <volume name="LOGTEST" size="507904"/>   <!--512KB(total size) - 16KB(configuration?) = 496KB-->
+  <volume name="CONFIGTEST" size="4608"/>
+</volume_table>

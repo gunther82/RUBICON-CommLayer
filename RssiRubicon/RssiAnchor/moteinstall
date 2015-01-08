@@ -1,0 +1,24 @@
+#!/bin/bash 
+
+function next {
+
+	color='\e[0;32m'
+	default='\e[0m'
+	echo -e "${color}Ready to install mote $1? (y/n)${default}"
+
+	read -s -n 1 key 
+
+	if [[ $key = "y" ]]; then 
+		make telosb reinstall.$1 bsl,$(motelist | grep "/dev" | awk {'print $2'})
+	else
+		echo Mote $1 not installed
+	fi
+}
+
+make telosb
+
+for i in $*; do
+
+	next $i
+
+done

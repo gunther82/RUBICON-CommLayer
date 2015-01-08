@@ -1,0 +1,132 @@
+package ucd.rubicon.network;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.util.Dictionary;
+import java.util.Properties;
+import java.util.Random;
+
+/**
+ * This DummyNetwork class can be used to test the system by sending some fake RubiconMessages
+ * It may serve as template for Network implementations that use RubiconMessages directly
+ * @author rubicon
+ *
+ */
+public class DummyNetwork extends RubiconNetwork implements Runnable {
+	
+	protected Thread thread = null;
+	protected int LENGTH_TEST_DATA = 400;
+	protected int remoteIslandPeisID;
+	public static String TEST_REMOTE_ISLAND_ID = "TEST_REMOTE_ISLAND_ID";
+	
+	public void init() {		
+		// Here each network implementations must connect to its source
+		// of data. e.g. the TinyOS Network class
+		// will have to initialize the MoteIF interface to the sink,
+		// implement the TinyOS SDK MessageListener interface and register
+		// itself as a listener with the MoteIF class
+		// This dummy version simply starts a thread, which is used to
+		// generate dummy data
+		// You can use getProperties() to access properties for this network
+		// Example:
+		// String source = getProperties().getProperty("TINYOS_SOURCE");
+		// source = PhenixSource.buildSource(source);
+		// ...
+
+		remoteIslandPeisID = Integer.parseInt(getProperties().getProperty(TEST_REMOTE_ISLAND_ID));
+		thread = new Thread(this); 
+		thread.start();		
+	}
+		
+
+	/**
+	 * This method is called by {@Link RubiconGateway} when a message is received by this network
+	 * TODO, check return value, assuming that the sender was another DummyNetwork
+	 */
+	@Override
+	public void handleMessageReceived(RubiconMessage message, RubiconAddress destination) {
+		System.out.println("DummyNetwork.handleMessageReceived");
+		System.out.println(message.toString());
+	}
+	
+	// The following methods are only for testing purpose, the 
+	// Network implementations do not need to override them
+	public final int getRemoteIslandPeisID() {
+		return remoteIslandPeisID;
+	}
+	
+	
+	public void run() {						
+		int device = 2;
+		
+		// wait a bit
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+		}
+		
+		// Declares two fake devices
+		RubiconAddress from = new RubiconAddress(getIslandID(), 1);
+		RubiconAddress to = new RubiconAddress(getIslandID(), 0);
+		 
+		System.out.println("DummyNetwork: sensing message join for fake device with led actuator and humidity and magnetic sensors");
+		RubiconMessageJoin rmsgj1 = new RubiconMessageJoin(from);
+		Properties resources = new Properties();
+		resources.put("led", "actuator.led");
+		resources.put("humidity", "sensor.humidity");
+		rmsgj1.setResources(resources);
+		rmsgj1.island_addr = (short)getIslandID(); 
+		rmsgj1.addr = 1;
+		rmsgj1.type = 1; // device type (unused)
+		sendMessageToGateway(rmsgj1, to);
+		
+		from = new RubiconAddress(this.getIslandID(), 2); 
+
+		System.out.println("DummyNetwork: sensing message join for fake device with light sensor");
+		RubiconMessageJoin rmsgj2 = new RubiconMessageJoin(from);
+		resources = new Properties();
+		resources.put("light", "sensor.light");
+		rmsgj2.setResources(resources);
+		rmsgj2.island_addr = (short)getIslandID();
+		rmsgj2.addr = 2;
+		rmsgj2.type = 1; // unused
+		sendMessageToGateway(rmsgj2, to);
+
+		// send other message in a loop
+		Random generator = new Random();
+		while (true) {			
+			
+			// send two sensor updates to the Proxy
+			// send first sensor update from device 1
+			from = new RubiconAddress(getIslandID(), 1);
+			to = new RubiconAddress(getIslandID(), 0);
+			DeviceUpdate update1 = new DeviceUpdate();
+			update1.add(new SensorUpdate("HUMIDITY", 45.0));
+			RubiconMessageCtrlUpdate rMsgUpdate1 = new RubiconMessageCtrlUpdate(from, update1);
+			sendMessageToGateway(rMsgUpdate1, to);
+						
+			// send second sensor update, from device 2
+			from = new RubiconAddress(this.getIslandID(), 2);
+			DeviceUpdate update2 = new DeviceUpdate();
+			update2.add(new SensorUpdate("LIGHT", 7.0));
+			RubiconMessageCtrlUpdate rMsgUpdate2 = new RubiconMessageCtrlUpdate(from, update2);
+			sendMessageToGateway(rMsgUpdate2, to);
+												
+			// send a user object (a byte array) to the 1st device in the remote island
+			to = new RubiconAddress(getRemoteIslandPeisID(), 1);			
+			byte testData[] = new byte[LENGTH_TEST_DATA]; 
+			for (int i=0; i<LENGTH_TEST_DATA; i++) {
+				testData[i] = (byte)i;
+			}
+			RubiconMessage msg = new RubiconMessage(from, testData);
+			sendMessageToGateway(msg, to);
+											
+		}
+					
+	}
+
+
+}
+
+
+

@@ -1,0 +1,42 @@
+/**
+ * 
+ */
+package ucd.rubicon.network.tinyos;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import ucd.rubicon.network.RubiconMessageCtrlPeriodicCmd;
+
+
+/**
+ * Control command message used to send the CMD_READ_PERIODICALLY instruction to a device
+ * 
+ * @author Mauro Dragone - UCD (<a href="mailto:mauro.dragone@ucd.ie">Contact</a>)
+ * @version %I%, %G%
+ * 
+ */
+public class RubiconMessageCtrlPeriodicCmdConverter extends RubiconMessageConverterTinyOS<RubiconMessageCtrlPeriodicCmd> {
+	
+	@Override
+	protected byte[] computePayload(RubiconMessageCtrlPeriodicCmd rubiconMessage) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(bos);
+		try {
+			dos.writeByte(3);
+			dos.writeByte(5);
+			dos.writeByte((byte)RubiconMessageCtrlTypesEnum.CMD_READ_PERIODICALLY.getCmdType());
+			dos.writeShort(rubiconMessage.getSensorBitmask());
+			dos.writeShort(rubiconMessage.getPeriod());
+			dos.flush();			
+			return bos.toByteArray();
+		} catch (IOException e) {
+			// TODO LOG
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+}

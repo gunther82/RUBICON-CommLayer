@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="ucd/rubicon/proxy/Test.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ucd.rubicon.gateway"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ucd.rubicon.network"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ucd.rubicon.network.salad"/>
+	<classpathentry kind="lib" path="lib/jna.jar"/>
+	<classpathentry kind="lib" path="lib/PeisJava.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="ucd/rubicon/network/tinyos/RubiconMessageCtrlPeriodicCmdConverter.java|ucd/rubicon/network/tinyos/RubiconMessageCtrlActuateCmdConverter.java|ucd/rubicon/network/tinyos/RubiconMessageCtrlTypesEnum.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ucd.rubicon.network"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cnr.rubicon.cml"/>
+	<classpathentry kind="lib" path="lib/tinyos.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
